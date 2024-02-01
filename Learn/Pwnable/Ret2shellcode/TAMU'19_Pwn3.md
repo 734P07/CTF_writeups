@@ -14,7 +14,7 @@ Stack:    Executable
 RWX:      Has RWX segments
 ```
 
-File 32 bits, arch i386 và PIE có kích hoạt
+File 32 bits, arch i386 và PIE có kích hoạt.
 Thấy stack có thể thực thi -> nghĩ ngay đến phương pháp ret2shellcode
 Sử dụng ghidra để reverse file, thấy hàm echo đã mác lỗi buffer overflow:
 
