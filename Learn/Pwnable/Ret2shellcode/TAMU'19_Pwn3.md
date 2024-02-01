@@ -14,9 +14,9 @@ Stack:    Executable
 RWX:      Has RWX segments
 ```
 
-File 32 bits, arch i386 và PIE có kích hoạt.
-Thấy stack có thể thực thi -> nghĩ ngay đến phương pháp ret2shellcode
-Sử dụng ghidra để reverse file, thấy hàm echo đã mác lỗi buffer overflow:
+File 32 bits, arch i386 và PIE có kích hoạt  
+Thấy stack có thể thực thi -> nghĩ ngay đến phương pháp ret2shellcode  
+Sử dụng ghidra để reverse file, thấy hàm echo đã mác lỗi buffer overflow:  
 
 ```
 /* WARNING: Function: __x86.get_pc_thunk.bx replaced with injection: get_pc_thunk_bx */
@@ -39,8 +39,8 @@ $	./pwn3
 Take this, you might need it on your journey 0xffc0e9ae!
 ```
 
-Chúng ta sẽ đẩy shellcode thực thi execve("/bin/sh"), sau đó ghi đè địa chỉ save rip trong stack của hàm echo bằng địa chỉ đã bị leak để thay đổi luồng của chương trình
-Ý tưởng đã có, giờ viết code khai thác:
+Chúng ta sẽ đẩy shellcode thực thi execve("/bin/sh"), sau đó ghi đè địa chỉ save rip trong stack của hàm echo bằng địa chỉ đã bị leak để thay đổi luồng của chương trình  
+Ý tưởng đã có, giờ viết code khai thác:  
 
 ```
 #!/usr/bin/python3
