@@ -166,5 +166,5 @@ vuln
 vuln.c
 xinet_startup.sh
 $ cat flag.txt
-picoCTF{1_<3_sm4sh_st4cking_3a9ee516616d21b3}
+picoCTF{1_<3_sm4sh_st4cking_XXXXXXXXXXXXXXXX}
 ```
