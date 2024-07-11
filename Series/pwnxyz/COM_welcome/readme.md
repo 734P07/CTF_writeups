@@ -45,10 +45,10 @@ undefined8 FUN_00100920(void)
 }
 ```
 
-Obviously, there is no easy flaw in the code, so the only way to get the flag is to make `*plVar1 == 0`, the easiest way is to use `((long)__buf + (local_28 - 1)) = 0` line.
-Read the malloc() manual, we know that malloc returns NULL on error. Attempting to allocate more than PTRDIFF_MAX bytes is considered an error.
-When it happens, the `((long)__buf + (local_28 - 1)) = 0` line becomes `local_28 - 1 = 0`.
-The leaked address is also a large number. So just set local_28 = leaked address + 1 and we're done!
+Obviously, there is no easy flaw in the code, so the only way to get the flag is to make `*plVar1 == 0`, the easiest way is to use `((long)__buf + (local_28 - 1)) = 0` line.  
+Read the malloc() manual, we know that malloc returns NULL on error. Attempting to allocate more than PTRDIFF_MAX bytes is considered an error.  
+When it happens, the `((long)__buf + (local_28 - 1)) = 0` line becomes `local_28 - 1 = 0`.  
+The leaked address is also a large number. So just set local_28 = leaked address + 1 and we're done!  
 Exploit:
 
 ```
