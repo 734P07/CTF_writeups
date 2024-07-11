@@ -1,0 +1,1 @@
+malloc và calloc trả về null khi cấp phát kích thước <=0 hoặc > 2^32
