@@ -1,6 +1,6 @@
 # Pwnable.xyz Add
 ## Analysis
-Ch&#432;&#417;ng tr&#236;nh mu&#7889;n ta nh&#7853;p 3 s&#7889, sau &#273;&#243; l&#432;u v&#224;o v&#7883; tr&#237; t&#432;&#417;ng &#7913;ng trong m&#7843;ng local_68:
+Ch&#432;&#417;ng tr&#236;nh mu&#7889;n ta nh&#7853;p 3 s&#7889; sau &#273;&#243; l&#432;u v&#224;o v&#7883; tr&#237; t&#432;&#417;ng &#7913;ng trong m&#7843;ng local_68:
 ```
 undefined8 main(void)
 {
