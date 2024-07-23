@@ -1,0 +1,7 @@
+3,y -> do_comment = 0x0b1f
+1,64 -> do_comment = 0x0b00 (real_print_flag) (strcpy offbyone)
+1,63    |
+...     | -> set key về 0 hết
+1, 1    |
+2 -> flag = flag ^ key(=x000000...)
+3,n -> (*do_comment)()
