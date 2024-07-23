@@ -64,9 +64,9 @@ Chương trình cho user 4 lựa chọn:
 + 2: in ra &heapPtr
 + 3: heapPtr = heapPtr[1]
 ## Solution
-Có &heapPtr -> có địa chỉ save rip -> ghi đè save rip bằng địa chỉ hàm win
-Để ret2win thành công thì free(heapPtr) trong option 0 cũng phải thành công -> sử dụng kỹ thuật house of spirit
-Chú ý tránh các lỗi alignment
+Có &heapPtr -> có địa chỉ save rip -> ghi đè save rip bằng địa chỉ hàm win  
+Để ret2win thành công thì free(heapPtr) trong option 0 cũng phải thành công -> sử dụng kỹ thuật house of spirit  
+Chú ý tránh các lỗi alignment  
 ```
 #!/usr/bin/python3
 from pwn import *
