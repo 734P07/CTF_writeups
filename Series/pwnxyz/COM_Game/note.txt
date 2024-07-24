@@ -1,0 +1,24 @@
+ops: +, -, /, *
+stdout
+stdin
+cur 0x8 * 4 bytes chứa các con trỏ chunk 0x20
+saves 0x8 * 5 bytes chứa các con trỏ chunk 0x20
+
+
+init_game:
++ cur[0] = last save
++ đọc 0x10 byte vào chunk cur 
++ *(củr+0x18) = play_game
+
++ 0: exit
++ 1: **(cur+0x18)()
++ 2: save_game:
+    save[i] = malloc(0x20)
+    save[i][0] = cur[0]
+    save[i][1] = cur[1]  
+    (copy hoàn hảo cũ sang mới)
++ 3: edit_name:
+    read(0, cur, strlen(cur))
+
++ play_game
+    
