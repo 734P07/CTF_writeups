@@ -1,0 +1,50 @@
+1. Chacha20-poly1305 được implement từng bước:
+    1.1. https://github.com/ph4r05/py-chacha20poly1305
+2. Bài viết nói về chacha20 và poly1305:
+    2.1. https://muens.io/chacha20
+    2.2. https://loup-vaillant.fr/tutorials/chacha20-design
+    2.3. https://muens.io/poly1305
+    2.4. https://loup-vaillant.fr/tutorials/poly1305-design
+3. Tấn công giả mạo tin nhắn khi key và nonce được sử dụng lại
+    3.1. https://crypto.stackexchange.com/questions/83629/forgery-attack-on-poly1305-when-the-key-and-nonce-reused
+
+Phân tích đề bài:
++ Bài sử dụng cặp key-nonce để mã hóa cho 2 bản plain khác nhau bằng chacha20poly1305
++ Đã biết enc_message dạng ciphertext (Bằng độ dài plain) + tag (16 bytes) + nonce (12 bytes)
++ Chưa biết key 32 bytes được chacha20 và poly1305 dùng chung
++ Yêu cầu: với dữ liệu đã cho, mã hóa một đoạn plain khác rồi giả mạo danh tính gửi lại cho server
+
+nonce đã được biết trước, giờ tìm ciphertext và mac tag
+Chacha20:
++ xor plaintext với ciphertext để tính key_stream (lưu ý key_stream này không phải là key mà đã được tính từ key và nonce, chi tiết đọc 2.1)
+=> xong phần ciphertext
+
+Poly1305:
++ Key 32 bytes được chia thành 2 phần r (16 bytes đầu) và s (16 bytes cuối)
++ Chia dữ liệu thành các khối 16 bytes
++ Dữ liệu ở đây là phần ciphertext sau khi đã chacha20
++ Những phép tính sau đây đã được tối giản để dễ hiểu
+
+"Did you know that ChaCha20-Poly1305 is an authenticated encryption algorithm?":
+a1 = 0x161687420776f6e6b20756f7920646944 (đang sai)
+a2 = 0x131796c6f502d30326168436168432074
+a3 = 0x16e6568747561206e6120736920353033
+a4 = 0x16974707972636e652064657461636974
+a5 = 0x13f6d687469726f676c61206e6f
+
+tag = (r * a1)
+tag = r * (r * a1 + a2) = a1*r^2 + a2r
+tag = r * ((a1*r^2 + a2r) + a3) = a1*r^3 + a2*r^2 + a3r
+... 
+tag1 = a1*r^5 + a2*r^4 + a3*r^3 + a4*r^2 + a5*r + s
+
+"That means it protects both the confidentiality and integrity of data!"
+b1 = 0x1727020746920736e61656d2074616854
+b2 = 0x1206568742068746f622073746365746f
+b3 = 0x1207974696c6169746e656469666e6f63
+b4 = 0x1666f20797469726765746e6920646e61
+b5 = 0x1216174616420
+
+tag2 = b1*r^5 + b2*r^4 + b3*r^3 + b4*r^2 + b5*r + s
+
+=> tag1 - tag2 (làm mất s) = ((a1-b1)*r^5 + ... + (a5-b5)*r) % P
